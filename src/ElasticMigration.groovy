@@ -7,12 +7,12 @@ import groovyx.net.http.RESTClient
 
 class MoveIndex {
     def sourceHost = "http://localhost:9200"
-    def sourceIndexName = 'backup_entities_faultlog_13'
+    def sourceIndexName = 'source_index_name'
     def destinationHost = "http://localhost:9200"
-    def destinationIndexName = 'entities_faultlog_13'
+    def destinationIndexName = 'destination_index_name'
     def docType = 'faultlog'
     def pageSize = 500
-    def checkIfExists = true
+    def checkIfExists = false
 
     def currentScrollId = ""
     def cachedSourceClient = new RESTClient("${sourceHost}".toString())
@@ -64,11 +64,12 @@ class MoveIndex {
             def source = datum._source
             def key = datum._id ?: "${docType}.${UUID.randomUUID().toString()}.${System.currentTimeMillis().toString()}"
             if (!source.isEmpty() && datum._type == docType && !destinationDocExists(key)) {
-                ['afterTreatmentId','engineId'].each {
-                    if((source as Map).containsKey(it)) {  }
-                }
-//            (source as Map).remove('afterTreatmentId')
-//            (source as Map).remove('engineId')
+//                ['afterTreatmentId','engineId'].each {
+//                    if((source as Map).containsKey(it)) {
+//                        (source as Map).remove('afterTreatmentId')
+//                        (source as Map).remove('engineId')
+//                    }
+//                }
                 results[key] = source
             }
         }
